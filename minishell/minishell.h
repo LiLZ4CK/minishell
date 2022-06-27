@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   mshell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:08:11 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/17 11:07:58 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/06/22 23:19:15 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,22 +20,7 @@
 # include	<readline/readline.h>
 # include	"./libft/libft.h"
 
-typedef struct big_list
-{
-	char				*ss;
-	struct big_list		*nextt;
-	struct mini_list	*m;
-}big_list;
-
-typedef struct mini_list
-{
-	char			*value;
-	int				type; //char*
-	struct mini_list	*next;
-	
-}mini_list;
-
-typedef struct data
+/* typedef struct data
 {
 	char	**line;
 	char	**lil;
@@ -51,8 +36,35 @@ typedef struct t_zero
 	char	**cmd2;
 	int		fd1;
 	int		fd2;
-}	t_zero;
+}	t_zero; */
 
+typedef enum
+{
+	CMD,
+	HEARDOC, 
+	ADDTO,
+	RIGHT,
+	ERRORR,
+	INFILEE,
+	SKIPP,
+	DELCR,
+	
+}t_token;
 
+typedef struct m_list
+{
+	char			**value;
+	t_token			type;
+	struct m_list	*next;
+	int				j;
+}m_list;
+
+typedef struct b_list
+{
+	char			*line;
+	struct b_list	*nextt;
+	struct m_list	*m;
+	int 			i;
+}b_list;
 
 #endif

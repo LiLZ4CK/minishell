@@ -6,7 +6,7 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:03:14 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/17 13:32:56 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/06/27 21:54:40 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	mr_white(void)
 void	handler(int num)
 {
 	//signal(SIGINT, handler);
-	write(STDOUT_FILENO, "➜ minishell  ", 13);
+	write(STDOUT_FILENO, "➜ mshell  ", 13);
 }
 
 da_list	*put_token(da_list *q, char *str, int len, int type)
@@ -169,7 +169,7 @@ void	lexer_init(t_data *p)
 	return(p);
 } */
 
-mini_list	*goto_last(mini_list *m)
+/* m_list	*goto_last(m_list *m)
 {
 	if (!m)
 		return (0);
@@ -178,7 +178,16 @@ mini_list	*goto_last(mini_list *m)
 	return (m);
 }
 
-void addlast_node(mini_list **m, mini_list *new)
+b_list	*go_b(b_list *q)
+{
+	if (!q)
+		return (0);
+	while (q->nextt != NULL)
+		q = q->nextt;
+	return (q);
+}
+
+void	addlast_node(m_list **m, m_list *new)
 {
 	if (*m == NULL)
 		*m = new;
@@ -189,18 +198,35 @@ void addlast_node(mini_list **m, mini_list *new)
 	}
 }
 
-mini_list	*new_node(char *str, int type)
+void	b_last(b_list **q, b_list *new)
 {
-	mini_list *m;
+	if (*q == NULL)
+		*q = new;
+	else
+	{
+		*q = go_b(*q);
+		(*q)->nextt = new;
+	}
+}
+
+b_list	*b_node(void)
+{
+	b_list *q;
+	q = malloc(sizeof(b_list));
+	return (q);
+}
+
+m_list	*new_node(char *str, int type)
+{
+	m_list *m;
 	
-	m = malloc(sizeof(mini_list));
+	m = malloc(sizeof(m_list));
 	m->value = ft_strdup(str);
-	m->type = type;
 	m->next = NULL;
 	return (m);
 }
 
-void	*list_init(big_list *q, char **str, int ind)
+void	*list_init(b_list *q, char **str, int ind)
 {
 	int	i;
 	
@@ -209,21 +235,21 @@ void	*list_init(big_list *q, char **str, int ind)
 	{
 		while (str[i])
 			i++;
-		q = malloc(sizeof(big_list));
+		q = malloc(sizeof(b_list));
 	}
 	if (ind == 2)
 	{
 		while (str[i])
 			i++;
 		printf("%d\n", i);
-		//q->m = (struct mini_list *)malloc(sizeof(mini_list));
+		//q->m = (struct m_list *)malloc(sizeof(m_list));
 		return(q->m);
 		//q->m = new_node(q->m, "", 2);
 	}
 	return(q);
 }
 
-void the_test(mini_list *m)
+void the_test(m_list *m)
 {
 	printf("\n \n ###########################\n");
 	while(m->next)
@@ -233,56 +259,468 @@ void the_test(mini_list *m)
 		sleep(1);
 	}
 	
-}
+} */
 
-int	main(void)
+/* int	main()
 {
 	t_data		*p;
-	big_list	*q;
-	mini_list 	*tmp;
+	b_list	*q;
+	m_list 	*tmp;
+	b_list 	*pmt;
 	int	i;
 	int	j;
 
 	i = 0;
 	p = malloc(sizeof(t_data));
-	while (!i)
+	while (1)
 	{
 		i = 0;
-		p->line = ft_splito(readline("\x1B[1;31m➜  minishell\x1B[37m "), '|');
-		q = malloc(sizeof(big_list));
+		j = 0;
+		p->line = ft_splito(readline("\x1B[1;31m➜  mshell\x1B[37m "), '|');
+		while(p->line[i])
+			i++;
+		q = b_node();
+		pmt = q;
+		i = 0;
 		q->m = new_node("", 0);
-		tmp = q->m;
 	 	while (p->line[i])
 		{
+			tmp = q->m;
 			j = 0;
-			printf("SPLIT 1[%d] : %s.\n", i, p->line[i]);
 			p->lil = ft_splito(p->line[i], ' ');
 			while (p->lil[j])
-			{
-				printf("In %d\n", j);
-				printf("SPLIT 2[%d][%d] : %s\n", i, j, p->lil[j]);
-				printf("sssssssssss\n");
-				addlast_node(&q->m, new_node(p->lil[j], 1));
-				j++;
-			}
+				addlast_node(&q->m, new_node(p->lil[j++], 1));
+			b_last(&q, b_node());
+			q->m = tmp;
+			q = q->nextt;
+			free(tmp);
 			i++;
-			//q = q->nextt;
 		}
-		//printf("%s\n", q->m->next->next->next->next->next->next->next->next->value);
-		q->m = tmp->next;
-		while(q->m)
+		//q->m = q->m->next;
+		printf("1111111\n");
+		q = pmt;
+		while(q->nextt)
 		{
-			printf("%s\n", q->m->value);
-			q->m = q->m->next;
-			sleep(1);
+			//q->m = q->m->next;
+			printf("##########\n");
+			while(q->m)
+			{
+				printf("value = %s\n", q->m->value);
+				q->m = q->m->next;
+				sleep(1);
+			}
+			q = q->nextt;
 		}
-		free(tmp);
-		//goto_last(q->m)->next = NULL;
-		//the_test(q->m);
-		//lexer_init(p);	
+		printf("i = %d\n", i);
 		j = 0;
 		while (j < i)
 			free(p->line[j++]);
-		//p->line = readline("\x1B[1;31m➜  minishell\x1B[37m ");*/
+	}
+} */
+
+/* int	grep_tokenL(char *str, int i)
+{
+	if (str[i] == '<')
+	{
+		if (str[i + 1] == '>')
+		{
+			i = skip_space(str, i);
+			if (str[i] == '<' || str[i] == '>' || str[i] == ';' || str[i] == '/')
+				return (ERRORR);
+			else
+				return(JTCREAT);
+		}
+		else if (str[i + 1] == '<')
+		{
+			i = skip_space(str, i);
+			if (str[i] == '<' || str[i] == '>' || str[i] == ';' || str[i] == '/')
+				return (ERRORR);
+			else
+				return (HEARDOC);
+		}
+		else if (str[i + 1] == ' ' || str[i + 1] == '\t')
+		{
+			i = skip_space(str, i);
+			if (str[i] == '<' || str[i] == '>' || str[i] == ';' || str[i] == '/')
+				return (ERRORR);
+			else
+				return (SKIPP);
+		}
+		else
+			return (SKIPP);
+	}
+	return (0);
+}
+
+int	grep_tokenR(char *str, int i)
+{
+	if (str[i] == '>')
+	{
+		if (str[i + 1] == '<')
+				return (ERRORR);
+		else if (str[i + 1] == '>')
+		{
+			i = skip_space(str, i);
+			if (str[i] == '<' || str[i] == '>' || str[i] == ';' || str[i] == '/')
+				return (ERRORR);
+			else
+				return (ADDTO);
+		}
+		else if (str[i + 1] == ' ' || str[i + 1] == '\t')
+		{
+			i = skip_space(str, i);
+			if (str[i] == '<' || str[i] == '>' || str[i] == ';' || str[i] == '/')
+				return (ERRORR);
+			else
+				return (DELNADD);
+		}
+		else
+			return (DELNADD);
+	}
+	return (0);
+} */
+
+/* int	grep_token(char *str, int i)
+{
+	char	c;
+
+	c = str[i];
+	while (str[i] && (str[i] == '<' || str[i] == '>'))
+	{
+		if   (c == '<')
+		{
+			if (str[i + 1] == '<')
+				return (HEARDOC);
+			else
+				return (INFILEE);
+		}
+		else if   (c == '>')
+		{
+			if (str[i + 1] == '>')
+				return (ADDTO);
+			else
+				return (DELCR);
+		}
+		i++;
+	}
+	return (ERRORR);
+} */
+
+
+
+
+int	ft_strlenn(char *s)
+{
+	int	i;
+
+	i = 0;
+	if (s == NULL)
+		return (0);
+	while (s[i])
+		i++;
+	return (i);
+}
+
+static int	skip_quots(char *str, int i, char sign)
+{
+	if (str[i] == sign)
+	{
+		i++;
+		while(str[i] != sign && str[i])
+			i++;
+		i++;
+	}
+	return (i);
+}
+
+static int	ft_wnb(char *str, char c)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			i = skip_quots(str, i, str[i]);
+			j++;
+		}
+		if (str[i] != '<' || str[i] != '>')
+			i++;
+		if ((str[0] != c && i == 0) || (str[i] != c && str[i - 1] == c))
+		{
+			i++;
+			j++;
+		}
+		else if (str[i])
+			i++;
+	}
+	return (j);
+}
+
+m_list	*goto_last(m_list *m)
+{
+	if (!m)
+		return (0);
+	while (m->next != NULL)
+		m = m->next;
+	return (m);
+}
+
+m_list	*addlast_node(m_list **m, m_list *new)
+{
+	if (*m == NULL)
+		*m = new;
+	else
+	{
+		*m = goto_last(*m);
+		(*m)->next = new;
+	}
+	return (*m);
+}
+
+m_list	*new_node(void)
+{
+	m_list *m;
+	
+	m = malloc(sizeof(m_list));
+	m->next = NULL;
+	return (m);
+}
+
+char	*ft_charjoin(char  *s, char c)
+{
+	char	*str;
+	int		len;
+	int		i;
+
+	//printf("{%s}\n",s);
+	if (s)
+	{
+		s = ft_strdup("");
+	}
+	i = ft_strlenn(s);
+	len = i + 2;
+	str = (char *)malloc(len);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		str[i] = s[i];
+		i++;
+	}
+	str[i] = c;
+	str[i + 1] = '\0';
+	free(s);
+	return (str);
+}
+
+int	skip_space(char *str, int i)
+{
+	while (str[i] == ' ' || str[i] == '\t')
+		i++;
+	return (i);
+}
+
+int	check_cmd(char c, int i)
+{
+	if (i == 1)
+	{
+		if (c == '<' || c == '>' || c == '|' || c == ';')
+			return (0);
+	}
+	if (i == 2)
+	{
+		if(c == ' ' || c == '\t' || c == '\n' || c == '\0' 
+			|| c == '<' || c == '>' || c == '|' || c == ';')
+			return(0);
+			
+	}
+	return (1);
+}
+
+b_list	*grep_command(b_list *p)
+{
+	char	c;
+
+	p->m->j = 0;
+	while(check_cmd(p->line[p->i], 1) && p->line[p->i])
+	{
+		if (check_cmd(p->line[p->i], 2) && p->line[p->i])
+		{
+			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
+			{
+				if(p->line[p->i] == '"' || p->line[p->i] == '\'')
+				{
+					c = p->line[p->i++];
+					while (p->line[p->i] != c && p->line[p->i])
+						p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
+					p->i++;
+					p->m->j++;
+				}
+				p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
+			}
+			p->m->j++;
+		}
+		p->i = skip_space(p->line, p->i);
+		if (p->line[p->i] == '-')
+		{
+			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
+				p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
+			p->m->j++;
+		}
+		p->i = skip_space(p->line, p->i);
+	}
+	//p->m->value[p->m->j] = NULL;
+	return (p);
+}
+
+b_list	*grep_token(b_list *p)
+{
+	int	i;
+
+	i = 0;
+	return (p);
+}
+
+int	single_inqts(char *line)
+{
+	int i;
+	int d;
+	
+	i = 0;
+	d = 0;
+	while (line[i])
+	{
+		if (line[i] == '"')
+		{
+			i++;
+			while(line[i] != '"' && line[i])
+			{
+				if (line[i] == '\'')
+					d++;
+				i++;
+			}
+			if(line[i] == '\0')
+				d = 0;
+		}
+		i++;
+	}
+	return (d);
+}
+
+int	double_inqts(char *line)
+{
+	int i;
+	int d;
+	
+	i = 0;
+	d = 0;
+	while (line[i])
+	{
+		if (line[i] == '\'')
+		{
+			i++;
+			while(line[i] != '\'' && line[i])
+			{
+				if (line[i] == '"')
+					d++;
+				i++;
+			}
+			if(line[i] == '\0')
+				d = 0;
+		}
+		i++;
+	}
+	return (d);
+}
+
+void	qts_check(char *line)
+{
+	int	i;
+	int	s;
+	int	d;
+
+	s = 0;
+	d = 0;
+	i = 0;
+	while(line[i])
+	{
+		if (line[i] == '\'')
+			s++;
+		if (line[i] == '"')
+			d++;
+		i++;
+	}
+	d -= double_inqts(line);
+	s -= single_inqts(line);
+	if (d % 2 || s % 2)
+	{
+			printf("unclosed quotes\n");
+			exit(1);
+	}
+}
+
+b_list	*struct_init(b_list *p)
+{
+	int	wn;
+	int pi;
+
+	p->line = readline("\x1B[1;31m➜  minishell\x1B[37m ");
+	qts_check(p->line);
+	wn = ft_wnb(p->line, ' ') + 1;
+	pi = ft_wnb(p->line, '|');
+	printf("wn = %d\n", wn);
+	p->m = malloc(sizeof(m_list));
+	p->m->value = malloc(sizeof(char *) * wn + 1);
+	return (p);
+}
+
+int main()
+{
+	b_list	*p;
+	
+	while (1)
+	{
+		p = malloc(sizeof(b_list));		
+		p = struct_init(p);
+		p->i = 0;
+	/* 	p->line = readline("\x1B[1;31m➜  minishell\x1B[37m ");
+		qts_check(p->line);
+		wn = ft_wnb(p->line, ' ') + 1;
+		pi = ft_wnb(p->line, '|');
+		printf("wn = %d\n", wn);
+		p->m = malloc(sizeof(m_list));
+		p->m->value = NULL;
+		p->m->value = malloc(sizeof(char *) * wn + 1);
+		p->i = 0; */
+		while (p->line[p->i])
+		{
+			p->i = skip_space(p->line, p->i);
+			if (p->line[p->i] != '<' && p->line[p->i] != '>' && p->line[p->i] != '|')
+			{
+				p = grep_command(p);
+				int k = 0;
+				while(k < p->m->j)
+				{
+					printf("%s\n", p->m->value[k++]);
+				}
+			}
+			if (p->line[p->i] == '<' || p->line[p->i] == '>')
+			{
+				p = grep_token(p);
+			}
+			if (p->line[p->i] == ';')
+				p->i++;
+			if(p->line[p->i] == '|')
+			{
+				p->m = addlast_node(&p->m, new_node());
+				p->i++;
+			}
+		}
+		free(p);
 	}
 }
