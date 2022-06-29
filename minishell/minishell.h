@@ -20,23 +20,6 @@
 # include	<readline/readline.h>
 # include	"./libft/libft.h"
 
-/* typedef struct data
-{
-	char	**line;
-	char	**lil;
-	int		i;
-	
-}t_data;
-
-typedef struct t_zero
-{
-	char	*path1;
-	char	*path2;
-	char	**cmd1;
-	char	**cmd2;
-	int		fd1;
-	int		fd2;
-}	t_zero; */
 
 typedef enum
 {
@@ -46,6 +29,7 @@ typedef enum
 	RIGHT,
 	ERRORR,
 	INFILEE,
+	OUTFILEE,
 	SKIPP,
 	DELCR,
 	
@@ -65,6 +49,24 @@ typedef struct b_list
 	struct b_list	*nextt;
 	struct m_list	*m;
 	int 			i;
+	int				wn;
 }b_list;
+
+int		ft_wnb2(char *str, char c);
+int		ft_strlenn(char *s);
+int		ft_wnbb(char *str, char c);
+m_list	*goto_last(m_list *m);
+m_list	*addlast_node(m_list **m, m_list *new);
+m_list	*new_node(b_list *p);
+char	*ft_charjoin(char  *s, char c);
+int		skip_space(char *str, int i);
+int		check_cmd(char c, int i);
+b_list	*grep_command(b_list *p);
+b_list	*grep_token(b_list *p);
+int		single_inqts(char *line);
+int		double_inqts(char *line);
+void	qts_check(char *line);
+void	check_tokens(char **line);
+b_list	*struct_init(b_list *p);
 
 #endif

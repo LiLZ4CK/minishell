@@ -6,12 +6,84 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:03:14 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/27 21:54:40 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/06/29 18:08:28 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"minishell.h"
 #include	"libft/libft.h"
+
+
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+//check miro
+
+
+
+
+
+
+
+int main()
+{
+	b_list	*p;
+	m_list	*tmp;
+	
+	while (1)
+	{
+		p = malloc(sizeof(b_list));		
+		p = struct_init(p);
+		printf("##########\n");
+		p->i = 0;
+		tmp = p->m;
+		while (p->line[p->i])
+		{
+			p->i = skip_space(p->line, p->i);
+			if (p->line[p->i] != '<' && p->line[p->i] != '>' && p->line[p->i] != '|')
+			{
+				p = grep_command(p);
+				int k = 0;
+				while(k < p->m->j)
+				{
+					printf("%s\n", p->m->value[k++]);
+				}
+			}
+			if (p->line[p->i] == '<' || p->line[p->i] == '>')
+			{
+				p = grep_token(p);
+			}
+			if(p->line[p->i] == '|')
+			{
+				printf("IN \n");
+				p->m = addlast_node(&p->m, new_node(p));
+				printf("&&&&&&&&&&&&\n");
+				p->m = p->m->next;
+				p->i++;
+				printf("OUT \n");
+			}
+		}
+		p->m = tmp;
+		free(tmp);
+	}
+}
 
 /* da_list	*goto_last(da_list *q)
 {
@@ -406,8 +478,42 @@ int	grep_tokenR(char *str, int i)
 	return (ERRORR);
 } */
 
+/* int	skip_quots(char *str, int i, char sign)
+{
+	if (str[i] == sign)
+	{
+		i++;
+		while(str[i] != sign && str[i])
+			i++;
+		i++;
+	}
+	return (i);
+}*/
 
+/* int	ft_wnb2(char *str, char c)
+{
+	int	i;
+	int	j;
 
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			i = skip_quots(str, i, str[i]);
+			j++;
+		}
+		if ((str[0] != c && i == 0) || (str[i] != c && str[i - 1] == c))
+		{
+			i++;
+			j++;
+		}
+		if (str[i])
+			i++;
+	}
+	return (j);
+}
 
 int	ft_strlenn(char *s)
 {
@@ -421,19 +527,7 @@ int	ft_strlenn(char *s)
 	return (i);
 }
 
-static int	skip_quots(char *str, int i, char sign)
-{
-	if (str[i] == sign)
-	{
-		i++;
-		while(str[i] != sign && str[i])
-			i++;
-		i++;
-	}
-	return (i);
-}
-
-static int	ft_wnb(char *str, char c)
+int	ft_wnbb(char *str, char c)
 {
 	int	i;
 	int	j;
@@ -480,8 +574,8 @@ m_list	*addlast_node(m_list **m, m_list *new)
 	}
 	return (*m);
 }
-
-m_list	*new_node(void)
+ */
+/* m_list	*new_node(void)
 {
 	m_list *m;
 	
@@ -496,8 +590,7 @@ char	*ft_charjoin(char  *s, char c)
 	int		len;
 	int		i;
 
-	//printf("{%s}\n",s);
-	if (s)
+	if (!s)
 	{
 		s = ft_strdup("");
 	}
@@ -551,34 +644,39 @@ b_list	*grep_command(b_list *p)
 	{
 		if (check_cmd(p->line[p->i], 2) && p->line[p->i])
 		{
+			p->m->value[p->m->j] = ft_strdup("");
 			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
 			{
 				if(p->line[p->i] == '"' || p->line[p->i] == '\'')
 				{
-					c = p->line[p->i++];
+					c = p->line[p->i];
+					printf(" cccc ==== %c\n", c);
+					p->i++;
 					while (p->line[p->i] != c && p->line[p->i])
 						p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
-					p->i++;
-					p->m->j++;
 				}
-				p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
+				else
+					p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
 			}
 			p->m->j++;
 		}
 		p->i = skip_space(p->line, p->i);
 		if (p->line[p->i] == '-')
 		{
+			p->m->value[p->m->j] = ft_strdup("");
 			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
 				p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
 			p->m->j++;
 		}
 		p->i = skip_space(p->line, p->i);
 	}
+	//p->m->j++;
 	//p->m->value[p->m->j] = NULL;
 	return (p);
 }
+ */
 
-b_list	*grep_token(b_list *p)
+/* b_list	*grep_token(b_list *p)
 {
 	int	i;
 
@@ -664,63 +762,52 @@ void	qts_check(char *line)
 	}
 }
 
+void	check_tokens(char **line)
+{
+	int		i;
+	int		j;
+	char	c;
+
+	i = 0;
+	while(line[i])
+	{
+		j = 0;
+		while(line[i][j])
+		{
+			if(line[i][j] != ' ' && line[i][j] != '\t' && line[i][j] != '\n')
+				c = line[i][j];
+			j++;
+		}
+		if(c == '<' || c == '>', c == '|')
+		{
+			printf("error %c\n")
+		}
+	}
+}
+
 b_list	*struct_init(b_list *p)
 {
 	int	wn;
 	int pi;
+	m_list *tmp;
 
-	p->line = readline("\x1B[1;31m➜  minishell\x1B[37m ");
+	p->line = ft_splito(readline("\x1B[1;31m➜  minishell\x1B[37m "), ';');
+	check_tokens(p.line);
+	while(p->line[i])
 	qts_check(p->line);
-	wn = ft_wnb(p->line, ' ') + 1;
-	pi = ft_wnb(p->line, '|');
-	printf("wn = %d\n", wn);
+	wn = ft_wnb2(p->line, ' ');
+	pi = ft_wnbb(p->line, '|') + 1;
+	printf("pipes = %d\n", pi);
 	p->m = malloc(sizeof(m_list));
-	p->m->value = malloc(sizeof(char *) * wn + 1);
+	tmp = p->m;
+	while(pi)
+	{
+		p->m->value = malloc(sizeof(char *) * wn + 1);
+		p->m = p->m->next;
+		pi--;
+	}
+	p->m = tmp;
+	//p->m->next = NULL;
 	return (p);
 }
-
-int main()
-{
-	b_list	*p;
-	
-	while (1)
-	{
-		p = malloc(sizeof(b_list));		
-		p = struct_init(p);
-		p->i = 0;
-	/* 	p->line = readline("\x1B[1;31m➜  minishell\x1B[37m ");
-		qts_check(p->line);
-		wn = ft_wnb(p->line, ' ') + 1;
-		pi = ft_wnb(p->line, '|');
-		printf("wn = %d\n", wn);
-		p->m = malloc(sizeof(m_list));
-		p->m->value = NULL;
-		p->m->value = malloc(sizeof(char *) * wn + 1);
-		p->i = 0; */
-		while (p->line[p->i])
-		{
-			p->i = skip_space(p->line, p->i);
-			if (p->line[p->i] != '<' && p->line[p->i] != '>' && p->line[p->i] != '|')
-			{
-				p = grep_command(p);
-				int k = 0;
-				while(k < p->m->j)
-				{
-					printf("%s\n", p->m->value[k++]);
-				}
-			}
-			if (p->line[p->i] == '<' || p->line[p->i] == '>')
-			{
-				p = grep_token(p);
-			}
-			if (p->line[p->i] == ';')
-				p->i++;
-			if(p->line[p->i] == '|')
-			{
-				p->m = addlast_node(&p->m, new_node());
-				p->i++;
-			}
-		}
-		free(p);
-	}
-}
+ */
