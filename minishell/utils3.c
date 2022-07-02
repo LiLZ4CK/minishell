@@ -6,18 +6,20 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 01:27:54 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/29 15:24:30 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/02 16:03:54 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"minishell.h"
-#include	"libft/libft.h"
 
 b_list	*grep_token(b_list *p)
 {
-	int	i;
-
-	i = 0;
+	if (p->line[p->i] == '<')
+		p = south_face(p);
+	else if(p->line[p->i] == '>')
+		p = north_face(p);
+	p->i = skip_space(p->line, p->i);
+	p = grep_file(p);
 	return (p);
 }
 
@@ -96,28 +98,5 @@ void	qts_check(char *line)
 	{
 			printf("unclosed quotes\n");
 			exit(1);
-	}
-}
-
-void	check_tokens(char **line)
-{
-	int		i;
-	int		j;
-	char	c;
-
-	i = 0;
-	while(line[i])
-	{
-		j = 0;
-		while(line[i][j])
-		{
-			if(line[i][j] != ' ' && line[i][j] != '\t' && line[i][j] != '\n')
-				c = line[i][j];
-			j++;
-		}
-		if(c == '<' || c == '>' || c == '|')
-		{
-			printf("error %c\n", c);
-		}
 	}
 }

@@ -6,19 +6,20 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 01:27:51 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/29 17:11:43 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/02 16:04:01 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"minishell.h"
-#include	"libft/libft.h"
 
 m_list	*new_node(b_list *p)
 {
 	m_list *m;
-	
+
 	m = malloc(sizeof(m_list));
 	m->value = malloc(sizeof(char *) * p->wn);
+	m->type = malloc(sizeof(int) * p->wn);
+	m->j = 0;
 	m->next = NULL;
 	return (m);
 }
@@ -76,40 +77,16 @@ int	check_cmd(char c, int i)
 
 b_list	*grep_command(b_list *p)
 {
-	char	c;
-
 	p->m->j = 0;
 	while(check_cmd(p->line[p->i], 1) && p->line[p->i])
 	{
 		if (check_cmd(p->line[p->i], 2) && p->line[p->i])
-		{
-			p->m->value[p->m->j] = ft_strdup("");
-			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
-			{
-				if(p->line[p->i] == '"' || p->line[p->i] == '\'')
-				{
-					c = p->line[p->i];
-					printf(" cccc ==== %c\n", c);
-					p->i++;
-					while (p->line[p->i] != c && p->line[p->i])
-						p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
-				}
-				else
-					p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
-			}
-			p->m->j++;
-		}
+			p = grep_cmddd(p);
 		p->i = skip_space(p->line, p->i);
 		if (p->line[p->i] == '-')
-		{
-			p->m->value[p->m->j] = ft_strdup("");
-			while(check_cmd(p->line[p->i], 2) && p->line[p->i])
-				p->m->value[p->m->j] = ft_charjoin(p->m->value[p->m->j], p->line[p->i++]);
-			p->m->j++;
-		}
+			p = grep_cmarg(p);
 		p->i = skip_space(p->line, p->i);
 	}
-	//p->m->j++;
-	//p->m->value[p->m->j] = NULL;
+	p->m->value[p->m->j] = NULL;
 	return (p);
 }

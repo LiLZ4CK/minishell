@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mshell.h                                        :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:08:11 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/22 23:19:15 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/02 16:10:53 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,27 +18,24 @@
 # include	<stdio.h>
 # include	<fcntl.h>
 # include	<readline/readline.h>
-# include	"./libft/libft.h"
 
 
 typedef enum
 {
 	CMD,
-	HEARDOC, 
-	ADDTO,
-	RIGHT,
-	ERRORR,
-	INFILEE,
+	ARGG,
+	FILEE,
+	APPENDD,
+	HEARDOC,
 	OUTFILEE,
-	SKIPP,
-	DELCR,
+	INFILEE
 	
 }t_token;
 
 typedef struct m_list
 {
 	char			**value;
-	t_token			type;
+	t_token			*type;
 	struct m_list	*next;
 	int				j;
 }m_list;
@@ -66,7 +63,18 @@ b_list	*grep_token(b_list *p);
 int		single_inqts(char *line);
 int		double_inqts(char *line);
 void	qts_check(char *line);
-void	check_tokens(char **line);
 b_list	*struct_init(b_list *p);
+b_list	*grep_token(b_list *p);
+b_list	*grep_cmarg(b_list *p);
+b_list	*grep_cmddd(b_list *p);
+b_list	*grep_cmdqts(b_list *p);
+b_list	*north_face(b_list *p);
+b_list	*south_face(b_list *p);
+b_list  *north_errors(b_list *p);
+b_list  *south_errors(b_list *p);
+b_list	*grep_file(b_list *p);
+int		ft_strlen(char *str);
+char	*ft_strdup( char *s1);
+b_list	*pipe_pipe(b_list *p);
 
 #endif

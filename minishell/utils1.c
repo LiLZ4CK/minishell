@@ -6,12 +6,12 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 01:27:40 by zwalad            #+#    #+#             */
-/*   Updated: 2022/06/29 16:14:56 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/02 16:04:07 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"minishell.h"
-#include	"libft/libft.h"
+
 int	ft_wnb2(char *str, char c)
 {
 	int		i;
@@ -22,22 +22,26 @@ int	ft_wnb2(char *str, char c)
 	j = 0;
 	while (str[i])
 	{
+		if (str[i] == '|')
+			i++;
 		if (str[i] == '"' || str[i] == '\'')
 		{
 			cc = str[i];
 			i++;
 			while (str[i] != cc && str[i])
 				i++;
-			if(str[i])
+			if (str[i])
 				i++;
 			j++;
 		}
-		if ((str[0] != c && i == 0) || (str[i] != c && str[i - 1] == c))
+		if ((str[0] != c && i == 0) || (str[i] != c && str[i - 1] == c)
+			|| (str[0] != '<' && i == 0) || (str[i] != '<' && str[i - 1] == '<')
+			|| (str[0] != '>' && i == 0) || (str[i] != '>' && str[i - 1] == '>'))
 		{
 			i++;
 			j++;
 		}
-		if (str[i])
+		if (str[i] || str[i] == '|')
 			i++;
 	}
 	return (j);
