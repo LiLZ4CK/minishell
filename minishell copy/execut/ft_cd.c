@@ -6,34 +6,38 @@
 /*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 17:44:58 by abdessamad        #+#    #+#             */
-/*   Updated: 2022/07/07 23:34:29 by abel-bou         ###   ########.fr       */
+/*   Updated: 2022/07/22 13:46:08 by abel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void   	ft_cd(b_list *b, t_var **var)
+void   	ft_cd(b_list *b, t_var **t_env, t_var **t_exp)
 {
 	t_var	*tmp;
 
-	tmp = *var;
+	ft_split_env(t_env);
+	spliti_export(t_exp);
+	tmp = *t_env;
 	if (b->wn == 2)
 	{
 		while (tmp)
 		{
-			if (!strcmp(tmp->split_env[0], "HOME"))
+			if (!ft_strcmp(tmp->key, "HOME"))
 			{
-				//printf("******%s\n", tmp->split_env[0]);
-				if (chdir(tmp->split_env[1]))
-					perror("bash: cd: HOME not set\n");
-				//update_env_exp(var);
-				return ;
+				if (!chdir(tmp->value))
+					return ;
 			}
 			tmp = tmp->next;
 		}
+		if (!tmp)
+			perror("bash: cd: HOME not set\n");
 	}
 	else if (chdir(b->m->value[1]))
+	{
+		printf("NAME===>%s\n", b->m->value[1]);
 		perror("bash: Error changing directory\n");
-	update_env_exp(var);
+	}
+	update_pwd_env_exp(t_env, t_exp);
 	return ;
 }

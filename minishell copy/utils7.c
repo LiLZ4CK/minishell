@@ -6,12 +6,11 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/04 20:54:02 by zwalad            #+#    #+#             */
-/*   Updated: 2022/07/21 22:32:22 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/23 21:20:13 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include	"minishell.h"
-
 int	pr_strchr(char *str, int c)
 {
 	int		i;
@@ -79,11 +78,9 @@ int	check_dollar(b_list *p, char *dollo)
 	j = pr_strlen(dollo);
 	while (p->var != NULL)
 	{
-		//printf("			TEST HERE\n");
-		//printf("	==	%s\n", p->var->split_env[0]);
-		if (pr_strncmpp(p->var->split_env[0], dollo) == 0)
+		if (pr_strncmpp(p->var->key, dollo) == 0)
 		{
-			p->valo = pr_strdup(p->var->split_env[1]);
+			p->valo = pr_strdup(p->var->value);
 			return (1);
 		}
 		p->var = p->var->next;
@@ -94,20 +91,23 @@ int	check_dollar(b_list *p, char *dollo)
 
 b_list	*dollar_init(b_list *p)
 {
-	while (p->line2[p->i])
+	if (p->line2)
 	{
-		if (p->line2[p->i] == '\'')
+		while (p->line2[p->i])
 		{
-			p->line = pr_charjoin(p->line, p->line2[p->i++]);
-			while (p->line2[p->i] != '\'' && p->line2[p->i])
-				p->line = pr_charjoin(p->line, p->line2[p->i++]);
 			if (p->line2[p->i] == '\'')
+			{
+				p->line = pr_charjoin(p->line, p->line2[p->i++]);
+				while (p->line2[p->i] != '\'' && p->line2[p->i])
+					p->line = pr_charjoin(p->line, p->line2[p->i++]);
+				if (p->line2[p->i] == '\'')
+					p->line = pr_charjoin(p->line, p->line2[p->i++]);
+			}
+			if (p->line2[p->i] == '$')
+				p = grep_dollar(p);
+			else
 				p->line = pr_charjoin(p->line, p->line2[p->i++]);
 		}
-		if (p->line2[p->i] == '$')
-			p = grep_dollar(p);
-		else
-			p->line = pr_charjoin(p->line, p->line2[p->i++]);
 	}
 	return (p);
 }

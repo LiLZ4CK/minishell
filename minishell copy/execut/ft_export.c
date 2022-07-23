@@ -6,51 +6,70 @@
 /*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 15:09:13 by abel-bou          #+#    #+#             */
-/*   Updated: 2022/07/07 23:56:14 by abel-bou         ###   ########.fr       */
+/*   Updated: 2022/07/22 19:44:34 by abel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	sort_env(t_var **var)
+void	sort_env(t_var **t_exp)
 {
 	int		i;
+	int		len;
+	char	*swap;
 	t_var	*tmp;
 	t_var	*tmp1;
-	char	*swap;
 
 	i = 0;
-	tmp = *var;
+	tmp = *t_exp;
 	while (tmp)
 	{
 		tmp1 = tmp->next;
 		while (tmp1)
 		{
-			if (ft_strcmp(tmp->exp, tmp1->exp) > 0)
+			if (ft_strcmp(tmp->content, tmp1->content) > 0)
 			{
-				swap = tmp->exp;
-				tmp->exp = tmp1->exp;
-				tmp1->exp = swap;
+				swap = tmp->content;
+				tmp->content = tmp1->content;
+				tmp1->content = swap;
 			}
 			tmp1 = tmp1->next;
 		}
-		tmp->split_exp = ft_split(tmp->exp, '=');
-		printf("%s\n", tmp->exp);
+		if (ft_strchr(tmp->content, '='))
+		{
+			len = ft_strlen(ft_strchr(tmp->content, '='));
+			tmp->key = ft_substr(tmp->content, 0, ft_strlen(tmp->content) - len);
+			tmp->value = ft_substr(tmp->content, ft_strlen(tmp->content) - len + 1, ft_strlen(tmp->content));
+			printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
+		}
+		else
+			printf("declare -x %s\n", tmp->content);
 		tmp = tmp->next;
 	}
 }
 
-int	existed(t_var **var, char *key)
+int	existed_in_env(t_var **t_env, char *key)
 {
-	char	**key_val;
     t_var	*tmp;
 
-	tmp = *var;
-
-	key_val = ft_split(key, '=');
+	tmp = *t_env;
 	while (tmp)
 	{
-		if (!strcmp(tmp->split_exp[0], key_val[0]))
+		if (!ft_strcmp(tmp->key, key))
+		 	return (-1);
+		tmp = tmp->next;
+	}
+	return (0);
+}
+
+int	existed_in_exp(t_var **t_exp, char *key)
+{
+    t_var	*tmp;
+
+	tmp = *t_exp;
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
 		 	return (-1);
 		tmp = tmp->next;
 	}
@@ -65,12 +84,11 @@ int	check_name_key(char *key)
 	if (key[0] != '_' && ft_isalpha(key[0]) == 0)
 	{
 		ft_err("export : not a valid identifier");
-		//printf("export : '%s':not a valid identifier\n", key);
 		return (-1);
 	}
 	while (key[i])
 	{
-		if (key[i] != '_' && ft_isalphanum(key[i]) == 0)
+		if (key[i] != '=' && key[i] != '_' && ft_isalphanum(key[i]) == 0)
 		{
 			ft_err("export : not a valid identifier");
 			return (-1);
@@ -80,122 +98,175 @@ int	check_name_key(char *key)
 	return (0);
 }
 
-int	key_no_value(char *key, t_var **var)
+int	key_no_value(char *key, t_var **t_exp)
 {
 	if (check_name_key(key))
 		return (-1);
-	if (!existed(var, key))
-		ft_lstadd_back(var, ft_lstnew(key));
+	if (!existed_in_exp(t_exp, key))
+		ft_lstadd_back(t_exp, ft_lstnew(key));
 	return (0);
 }
 
-void	write_again(t_var **var, char **key_val)
+void	write_again_in_env(t_var **t_env, char *key, char *value)
 {
     t_var	*tmp;
 
-	tmp = *var;
-	while (var)
+	tmp = *t_env;
+	while (tmp)
 	{
-		if (!strcmp(tmp->split_exp[0], key_val[0]))
+		if (!ft_strcmp(tmp->key, key))
 		{
-			tmp->exp = key_val[0];
-			tmp->exp = ft_strjoin(tmp->exp, "=");
-			tmp->exp = ft_strjoin(tmp->exp, key_val[1]);
+			tmp->content = key;
+			tmp->content = ft_strjoin(tmp->content, "=");
+			tmp->content = ft_strjoin(tmp->content, value);
 			return ;
 		}
 		tmp = tmp->next;
 	}
 }
 
-void	search_key(t_var **var, char **key_val)
+void	write_again_in_exp(t_var **t_exp, char *key, char *value)
 {
     t_var	*tmp;
 
-	tmp = *var;
+	tmp = *t_exp;
 	while (tmp)
 	{
-		if (!strcmp(tmp->split_exp[0], key_val[0]))
+		if (!ft_strcmp(tmp->key, key))
 		{
-			tmp->exp = ft_strjoin(tmp->exp, key_val[1]);
+			tmp->content = key;
+			tmp->content = ft_strjoin(tmp->content, "=");
+			tmp->content = ft_strjoin(tmp->content, value);
+			return ;
+		}
+		tmp = tmp->next;
+	}
+}
+
+void	search_key_in_exp(t_var **t_exp, char *key_val)
+{
+    t_var	*tmp;
+	char	*key;
+	char	*value;
+	int		len;
+
+	tmp = *t_exp;
+	len = ft_strlen(key_val) - ft_strlen(ft_strchr(key_val, '='));
+	key = ft_substr(key_val, 0, len - 1);
+	value = ft_substr(key_val, len + 1, ft_strlen(key_val));
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
+		{
+			tmp->content = ft_strjoin(tmp->content, value);
 			break;
 		}
 		tmp = tmp->next;
 	}
 }
 
-void	key_value(t_var **var, char *key_val)
+void	search_key_in_env(t_var **t_env, char *key_val)
+{
+    t_var	*tmp;
+	char	*key;
+	char	*value;
+	int		len;
+
+	tmp = *t_env;
+	len = ft_strlen(key_val) - ft_strlen(ft_strchr(key_val, '='));
+	key = ft_substr(key_val, 0, len - 1);
+	value = ft_substr(key_val, len + 1, ft_strlen(key_val));
+	while (tmp)
+	{
+		if (!ft_strcmp(tmp->key, key))
+		{
+			tmp->content = ft_strjoin(tmp->content, value);
+			break;
+		}
+		tmp = tmp->next;
+	}
+}
+
+void	key_value(t_var **t_env, t_var **t_exp, char *key_val)
 {
 	int		i;
-	char	**spl_k_v;
-	char	*cp_k_v;
+	int		len;
+	char	*key;
+	char	*value;
 
-	spl_k_v = ft_split(key_val, '=');
-	cp_k_v = malloc(sizeof(char) * ft_strlen(key_val) + 4);
-	cp_k_v = key_val;
+	len = ft_strlen(ft_strchr(key_val, '='));
+	key = ft_substr(key_val, 0, ft_strlen(key_val) - len);
+	value = ft_substr(key_val, ft_strlen(key_val) - len + 1, ft_strlen(key_val));
 	i = 1;
 	while (key_val[i])
 	{
-		if (key_val[i] == '+' && key_val[i + 1] == '=')
+		if (key_val[i] == '=')
 		{
-			spl_k_v[0] = ft_substr(spl_k_v[0], 0, ft_strlen(spl_k_v[0]) - 1);
-			if (check_name_key(spl_k_v[0]))
+			if (check_name_key(key))
 				return ;
-			if (!existed(var, spl_k_v[0]))
+			if (!existed_in_env(t_env, key))
+				ft_lstadd_back(t_env, ft_lstnew(key_val));
+			else
+				write_again_in_env(t_env, key, value);
+
+			if (!existed_in_exp(t_exp, key))
+				ft_lstadd_back(t_exp, ft_lstnew(key_val));
+			else
+				write_again_in_exp(t_exp, key, value);
+			return ;
+		}
+		else if (key_val[i] == '+' && key_val[i + 1] == '=')
+		{
+			key = ft_substr(key_val, 0, ft_strlen(key_val) - len - 1);
+			if (check_name_key(key))
+				return ;
+			if (!existed_in_exp(t_exp, key))
 			{
-				cp_k_v = ft_substr(cp_k_v, ft_strlen(spl_k_v[0]) + 1, ft_strlen(cp_k_v));
-				// cp_k_v = ft_strjoin("=\"", cp_k_v);
-				// cp_k_v = ft_strjoin(cp_k_v, "\"");
-				key_val = ft_strjoin(spl_k_v[0], cp_k_v);
-				ft_lstadd_back(var, ft_lstnew(key_val));
+				key = ft_strjoin(key, "=");
+				key_val = ft_strjoin(key, value);
+				ft_lstadd_back(t_exp, ft_lstnew(key_val));
 			}
 			else
-		 		search_key(var, spl_k_v);
+		 		search_key_in_exp(t_exp, key_val);
+			if (!existed_in_env(t_env, key))
+			{
+				key_val = ft_strjoin(key, value);
+				ft_lstadd_back(t_env, ft_lstnew(key_val));
+			}
+			else
+				search_key_in_env(t_env, key_val);
 			return ;
 		}
 		i++;
 	}
-	if (check_name_key(spl_k_v[0]))
-		return ;
-	if (!existed(var, spl_k_v[0]))
-		ft_lstadd_back(var, ft_lstnew(key_val));
-	else
-		write_again(var, spl_k_v);
 }
 
-// void	dollar_variable(t_var **var, char *av)
-// {
-	
-// }
-
-void	without_dollar(t_var **var, char *av)
+void	exec(t_var **t_env, t_var **t_exp, char *av)
 {
-	char	**spl_av;
-
-	spliti_export(var);
-	spl_av = ft_split(av, '=');
-	if (!spl_av[1])
-		key_no_value(spl_av[0], var);
+	if (!ft_strchr(av, '='))
+		key_no_value(av, t_exp);
 	else
-		key_value(var, av);
+		key_value(t_env, t_exp, av);
+	return ;
 }
 
-void	ft_export(t_var **var, b_list *b)
+void	 ft_export(t_var **t_env, t_var **t_exp, b_list *b)
 {
 	int	i;
 
+	t_var *tmp;
+	tmp = *t_exp;
 	if (b->wn >= 3)
 	{
 	 	i = 1;
 	 	while (b->m->value[i])
 	 	{
-			// if (b->m->value[i][0] == '$')
-			// 	dollar_variable(var, b->m->value[i]);
-			// else
-			without_dollar(var, b->m->value[i]);
-	 		i++;
+			ft_split_env(t_env);
+			spliti_export(t_exp);
+			exec(t_env, t_exp, b->m->value[i]);
+			i++;
 	 	}
-		//sort_env(var);
 	}
 	else
-	 	sort_env(var);
+	 	sort_env(t_exp);
 }

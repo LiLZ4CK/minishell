@@ -6,7 +6,7 @@
 /*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:03:14 by zwalad            #+#    #+#             */
-/*   Updated: 2022/07/23 19:23:39 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/23 20:03:19 by zwalad           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ b_list *parser(t_var *var)
 	b_list	*p;
 	m_list	*tmp;
 	
-	p = malloc(sizeof(b_list));		
+	p = malloc(sizeof(b_list));
+	ft_split_env(&var);
 	p->var = var;
 	p = struct_init(p);
 	tmp = p->m;
@@ -38,6 +39,5 @@ b_list *parser(t_var *var)
 	p->m->ouf[p->m->oo] = NULL;
 	p->m->herdo[p->m->hr] = NULL;
 	p->m = tmp;
-	printf("%s \nfinish parse!! \n[abel-bou]➜\n", p->m->value[0]);
 	return(p);
 }

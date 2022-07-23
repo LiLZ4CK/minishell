@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
+/*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:03:14 by zwalad            #+#    #+#             */
-/*   Updated: 2022/07/23 03:32:36 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/23 19:38:14 by abel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,18 +55,17 @@ void	the_freeee(b_list *p)
 int	main(int ac, char **av, char **env)
 {
 	b_list	*p;
-	t_var	*var;
+	t_var	*t_env;
+	t_var	*t_exp;
 
 	(void)ac;
 	(void)av;
-	var = NULL;
-	var = cpy_env(&var, env);
+	t_env = cpy_env(&t_env, env);
+	t_exp = cpy_env(&t_exp, env);
 	while (1)
 	{
-		ft_split_env(&var);
-		spliti_export(&var);
-		p = parser(var);
-		builtins(&var, p);
+		p = parser(t_env);
+		builtins(&t_env, &t_exp, p);
 		//the_freeee(p);
 	}
 }

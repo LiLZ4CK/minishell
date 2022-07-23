@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_ex_env.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abdessamad <abdessamad@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 17:43:06 by abel-bou          #+#    #+#             */
-/*   Updated: 2022/07/07 23:11:43 by abel-bou         ###   ########.fr       */
+/*   Updated: 2022/07/22 03:07:49 by abdessamad       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,20 @@
 void	spliti_export(t_var **var)
 {
 	t_var	*tmp;
-	
+	int		len;
+
 	tmp = *var;
+	len = 0;
 	while (tmp)
 	{
-		tmp->split_exp = ft_split(tmp->exp, '=');
+		if (ft_strchr(tmp->content, '='))
+		{
+			len = ft_strlen(ft_strchr(tmp->content, '='));
+			tmp->key = ft_substr(tmp->content, 0, ft_strlen(tmp->content) - len);
+			tmp->value = ft_substr(tmp->content, ft_strlen(tmp->content) - len + 1, ft_strlen(tmp->content));
+		}
+		else
+			tmp->key = tmp->content;
 		tmp = tmp->next;
 	}
 }
@@ -27,11 +36,20 @@ void	spliti_export(t_var **var)
 void	ft_split_env(t_var **var)
 {
 	t_var	*tmp;
+	int		len;
 
 	tmp = *var;
+	len = 0;
 	while (tmp)
 	{
-		tmp->split_env = ft_split(tmp->env_line, '=');
+		if (ft_strchr(tmp->content, '='))
+		{
+			len = ft_strlen(ft_strchr(tmp->content, '='));
+			tmp->key = ft_substr(tmp->content, 0, ft_strlen(tmp->content) - len);
+			tmp->value = ft_substr(tmp->content, ft_strlen(tmp->content) - len + 1, ft_strlen(tmp->content));
+		}
+		else
+			tmp->key = tmp->content;
 		tmp = tmp->next;
 	}
 }

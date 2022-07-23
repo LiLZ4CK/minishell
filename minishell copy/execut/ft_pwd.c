@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_pwd.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abdessamad <abdessamad@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/28 15:09:25 by abel-bou          #+#    #+#             */
-/*   Updated: 2022/07/05 19:59:09 by abel-bou         ###   ########.fr       */
+/*   Updated: 2022/07/22 03:07:35 by abdessamad       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 char	*ft_pwd(void)
 {
-	char	cmd[4096];
+	char	*cmd;
 
-	if (!getcwd(cmd, sizeof(cmd)))
+	cmd = NULL;
+	if (!getcwd(cmd, _PC_PATH_MAX))
 		return (NULL);
-	// printf("%s\n", cmd);
-	return (getcwd(cmd, sizeof(cmd)));
+	return (getcwd(cmd, _PC_PATH_MAX));
 }

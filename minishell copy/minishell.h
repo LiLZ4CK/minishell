@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+        */
+/*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/04 17:08:11 by zwalad            #+#    #+#             */
-/*   Updated: 2022/07/23 03:26:29 by zwalad           ###   ########.fr       */
+/*   Updated: 2022/07/23 19:37:20 by abel-bou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ typedef enum
 
 typedef struct s_var
 {
-	char	*env_line;
-	char	**split_env;
-	char	*exp;
-	char	**split_exp;
+	char	*key;
+	char	*value;
+	int		len;
+	char	*content;
 	struct s_var *next;
 }   t_var;
 
@@ -112,19 +112,18 @@ b_list	*dollar_init(b_list *p);
 
 //void	*find_path(char **env);
 //void	*check_cmd(t_var **var, char *cmd);
-
 t_var	*cpy_env(t_var **var, char **env);
-void    update_env_exp(t_var **var);
+void    update_pwd_env_exp(t_var **env, t_var **exp);
 void	ft_update_old_exp(t_var **var);
 void	ft_update_exp(t_var **var);
 
 void	ft_echo(b_list *b);
-void   	ft_cd(b_list *b, t_var **var);
+void   	ft_cd(b_list *b, t_var **t_env, t_var **exp);
 char	*ft_pwd();
 void	ft_env(t_var **var);
 void	ft_exit();
-void	ft_unset(t_var **var, b_list *b);
-void	ft_export(t_var **var, b_list *b);
+void	ft_unset(t_var **t_env, t_var **t_exp, b_list *b);
+void	ft_export(t_var **t_env, t_var **t_exp, b_list *b);
 void	spliti_export(t_var **var);
 void	ft_split_env(t_var **var);
 
@@ -146,10 +145,10 @@ void	ft_lstadd_back(t_var **lst, t_var *new);
 void	ft_lstadd_front(t_var **lst, t_var *new);
 t_var	*ft_lstlast(t_var *lst);
 int		ft_lstsize(t_var *list);
-void	delete_node(t_var **var, char *key);
-//void	free_list(t_var **var);
+void	delete_node_in_env(t_var **var, char *key);
+void	delete_node_in_exp(t_var **var, char *key);
 
-void	builtins(t_var **var, b_list *tmp);
+void	builtins(t_var **env, t_var **exp, b_list *tmp);
 void	the_free(char **str);
 int		herror(char *str);
 char	*ft_access(char **str);

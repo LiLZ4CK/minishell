@@ -6,7 +6,7 @@
 #    By: zwalad <zwalad@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:48:17 by zwalad            #+#    #+#              #
-#    Updated: 2022/07/23 03:27:34 by zwalad           ###   ########.fr        #
+#    Updated: 2022/07/23 21:19:18 by zwalad           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ C_Yellow = \033[1;33m
 C_Purple = \033[1;35m
 
 EXEC := execut/builtins.c\
-		execut/check_path_cmd.c\
 		execut/ft_utils_lib.c\
 		execut/ft_echo.c\
 		execut/ft_cd.c\
@@ -63,7 +62,7 @@ SRC := main.c\
 all: $(NAME)
 
 $(NAME): $(SRC)
-	@$(CC) $(SRC) $(EXEC) -o $(NAME) $(FLAGS) -lreadline 
+	@$(CC) $(SRC) $(EXEC) -o $(NAME) $(FLAGS) -lreadline -fsanitize=address -g
 		@echo "$(C_RED)			      ___                       ___                       ___           ___           ___           ___       ___ "
 		@echo "$(C_RED)			     /\__\\          ___        /\__\\          ___        /\  \         /\__\         /\  \         /\__\\     /\__\\"
 	@echo "$(C_RED)			    /::|  |        /\  \      /::|  |        /\  \      /::\  \       /:/  /        /::\  \       /:/  /    /:/  /"

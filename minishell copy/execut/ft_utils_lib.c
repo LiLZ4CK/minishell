@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_utils_lib.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-bou <abel-bou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abdessamad <abdessamad@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/21 17:35:35 by abel-bou          #+#    #+#             */
-/*   Updated: 2022/07/08 16:21:53 by abel-bou         ###   ########.fr       */
+/*   Updated: 2022/07/22 03:11:58 by abdessamad       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ t_var	*ft_lstnew(char *content)
 	node = malloc(sizeof(t_var));
 	if (!node)
 		return (0);
-	node->env_line = content;
-	node->exp = content;
+	node->content = content;
 	node->next = NULL;
 	return (node);
 }
+
 void	ft_lstadd_back(t_var **lst, t_var *new)
 {
 	t_var	*tmp;
@@ -33,12 +33,6 @@ void	ft_lstadd_back(t_var **lst, t_var *new)
 	while (tmp->next)
 		tmp = tmp->next;
 	tmp->next = new;
-}
-
-void	ft_lstadd_front(t_var **lst, t_var *new)
-{
-	new->next = *lst;
-	*lst = new;
 }
 
 t_var	*ft_lstlast(t_var *lst)
@@ -51,30 +45,15 @@ t_var	*ft_lstlast(t_var *lst)
 	return (st);
 }
 
-int	ft_lstsize(t_var *list)
-{
-	int	size;
-
-	size = 0;
-	if (!list)
-		return (0);
-	while (list)
-	{
-		list = list->next;
-		size++;
-	}
-	return (size);
-}
-
-void	delete_node(t_var **var, char *key)
+void	delete_node_in_env(t_var **t_env, char *key)
 {
 	t_var	*tmp;
 	t_var	*prev;
 
-	tmp = *var;
-	if (tmp && !ft_strcmp(tmp->split_env[0], key))
+	tmp = *t_env;
+	if (tmp && !(ft_strcmp(tmp->key, key)))
 	{
-		*var = (*var)->next;
+		*t_env = (*t_env)->next;
 		free(tmp);
 		return ;
 	}
@@ -82,7 +61,35 @@ void	delete_node(t_var **var, char *key)
 	{
 		while(tmp)
 		{
-			if (!ft_strcmp(tmp->split_env[0], key))
+			if (!ft_strcmp(tmp->key, key))
+			{
+				prev->next = tmp->next;
+				free(tmp);
+				break;
+			}
+			prev = tmp;
+			tmp = tmp->next;
+		}
+	}
+}
+
+void	delete_node_in_exp(t_var **t_exp, char *key)
+{
+	t_var	*tmp;
+	t_var	*prev;
+
+	tmp = *t_exp;
+	if (tmp && !(ft_strcmp(tmp->key, key)))
+	{
+		*t_exp = (*t_exp)->next;
+		free(tmp);
+		return ;
+	}
+	else
+	{
+		while(tmp)
+		{
+			if (!ft_strcmp(tmp->key, key))
 			{
 				prev->next = tmp->next;
 				free(tmp);
